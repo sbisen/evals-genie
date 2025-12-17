@@ -142,6 +142,9 @@ class TestSet(BaseModel):
     ground_truth: str = Field(..., description="Expected ground truth answer")
     difficulty: str = Field(..., description="Difficulty level (easy, medium, hard)")
     last_status: Optional[str] = Field(default=None, description="Last evaluation status (pass, fail, warn)")
+    last_agent_answer: Optional[str] = Field(default=None, description="Last agent-generated answer")
+    last_evaluation_reasoning: Optional[str] = Field(default=None, description="Reasoning for last evaluation")
+    last_run_id: Optional[str] = Field(default=None, description="ID of the last evaluation run")
 
 
 class TestSetCreate(BaseModel):

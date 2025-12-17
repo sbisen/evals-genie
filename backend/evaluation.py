@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 import uuid
 import random
+import os
+import google.generativeai as genai
+from dotenv import load_dotenv
 
 from database import get_collection
 from models import (
@@ -9,6 +12,14 @@ from models import (
     EvalMetrics, MetricBreakdown
 )
 from auth import get_current_user
+
+# Load environment variables
+load_dotenv()
+
+# Configure Gemini API
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 router = APIRouter()
 
@@ -26,7 +37,10 @@ async def list_test_sets(domain_id: str, current_user: dict = Depends(get_curren
         question=ts["question"],
         ground_truth=ts["ground_truth"],
         difficulty=ts["difficulty"],
-        last_status=ts.get("last_status")
+        last_status=ts.get("last_status"),
+        last_agent_answer=ts.get("last_agent_answer"),
+        last_evaluation_reasoning=ts.get("last_evaluation_reasoning"),
+        last_run_id=ts.get("last_run_id")
     ) for ts in test_sets]
 
 
@@ -76,6 +90,96 @@ async def delete_test_set(
     return {"message": "Test set deleted successfully"}
 
 
+# Helper Functions for Evaluation
+
+async def generate_agent_answer(question: str) -> str:
+    """
+    Simulate a data analytics agent generating an answer to a question.
+    In a real scenario, this would call your actual agent.
+    For now, we'll use Gemini to generate a plausible answer.
+    """
+    if not GEMINI_API_KEY:
+        # Fallback to mock answer if no API key
+        return f"Mock agent answer for: {question}"
+    
+    try:
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        prompt = f"""You are a data analytics agent. Answer the following question as if you're analyzing business data:
+
+Question: {question}
+
+Provide a concise, data-driven answer."""
+        
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        print(f"Error generating agent answer: {e}")
+        return f"Error generating answer: {str(e)}"
+
+
+async def evaluate_answer_with_gemini(question: str, ground_truth: str, agent_answer: str) -> dict:
+    """
+    Use Gemini to evaluate if the agent's answer matches the ground truth.
+    Returns a dict with status ('pass', 'fail', 'warn') and reasoning.
+    """
+    if not GEMINI_API_KEY:
+        # Fallback to random evaluation if no API key
+        return {
+            "status": random.choice(["pass", "fail", "warn"]),
+            "reasoning": "No API key configured - using random evaluation"
+        }
+    
+    try:
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        prompt = f"""You are an evaluation agent. Compare the agent's answer with the ground truth and determine if they match.
+
+Question: {question}
+
+Ground Truth: {ground_truth}
+
+Agent's Answer: {agent_answer}
+
+Evaluate if the agent's answer is:
+- PASS: Correct and matches the ground truth intent (even if wording differs)
+- FAIL: Incorrect or contradicts the ground truth
+- WARN: Partially correct or missing some details
+
+Respond in this exact format:
+STATUS: [PASS/FAIL/WARN]
+REASONING: [Brief explanation of your evaluation]"""
+        
+        response = model.generate_content(prompt)
+        result_text = response.text.strip()
+        
+        # Parse the response
+        status = "warn"  # default
+        reasoning = "Unable to parse evaluation result"
+        
+        lines = result_text.split('\n')
+        for line in lines:
+            if line.startswith('STATUS:'):
+                status_text = line.replace('STATUS:', '').strip().lower()
+                if 'pass' in status_text:
+                    status = 'pass'
+                elif 'fail' in status_text:
+                    status = 'fail'
+                elif 'warn' in status_text:
+                    status = 'warn'
+            elif line.startswith('REASONING:'):
+                reasoning = line.replace('REASONING:', '').strip()
+        
+        return {
+            "status": status,
+            "reasoning": reasoning
+        }
+    except Exception as e:
+        print(f"Error evaluating with Gemini: {e}")
+        return {
+            "status": "warn",
+            "reasoning": f"Error during evaluation: {str(e)}"
+        }
+
+
 # Evaluation Run Endpoint
 
 @router.post("/domains/{domain_id}/run-eval")
@@ -84,8 +188,11 @@ async def run_evaluation(
     current_user: dict = Depends(get_current_user)
 ):
     """
-    Trigger a mock evaluation run.
-    Iterates through all test sets for the domain and randomly updates their status.
+    Trigger a real evaluation run using Gemini API.
+    For each test set:
+    1. Generate an agent answer for the question
+    2. Compare it with ground truth using Gemini
+    3. Update the test set status based on evaluation
     """
     collection = get_collection("test_sets")
     
@@ -98,19 +205,33 @@ async def run_evaluation(
     # Generate a unique run ID
     run_id = str(uuid.uuid4())
     
-    # Randomly update status for each test set
-    statuses = ["pass", "fail", "warn"]
+    # Evaluate each test set
     for test_set in test_sets:
-        random_status = random.choice(statuses)
+        question = test_set["question"]
+        ground_truth = test_set["ground_truth"]
+        
+        # Step 1: Generate agent answer
+        agent_answer = await generate_agent_answer(question)
+        
+        # Step 2: Evaluate with Gemini
+        evaluation = await evaluate_answer_with_gemini(question, ground_truth, agent_answer)
+        
+        # Step 3: Update test set with results
         await collection.update_one(
             {"_id": test_set["_id"]},
-            {"$set": {"last_status": random_status}}
+            {"$set": {
+                "last_status": evaluation["status"],
+                "last_agent_answer": agent_answer,
+                "last_evaluation_reasoning": evaluation["reasoning"],
+                "last_run_id": run_id
+            }}
         )
     
     return {
         "status": "completed",
         "run_id": run_id,
-        "test_sets_evaluated": len(test_sets)
+        "test_sets_evaluated": len(test_sets),
+        "message": "Evaluation completed using Gemini API"
     }
 
 
