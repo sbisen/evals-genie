@@ -172,7 +172,7 @@ async def seed_context_data():
         await training_collection.insert_many(training_examples)
     print(f"✅ Added {len(training_examples)} Training Examples")
     
-    # 5. Test Sets
+    # 5. Test Sets (with varied statuses for better dashboard metrics)
     print("\n🧪 Seeding Test Sets...")
     test_sets_collection = db["test_sets"]
     
@@ -182,35 +182,72 @@ async def seed_context_data():
             "question": "What is the year-over-year growth rate for Q4?",
             "ground_truth": "Calculate (Q4_2024_revenue - Q4_2023_revenue) / Q4_2023_revenue * 100",
             "difficulty": "medium",
-            "last_status": "pass"
+            "last_status": "pass",
+            "last_agent_answer": "To calculate YoY growth: ((Q4 2024 - Q4 2023) / Q4 2023) × 100",
+            "last_evaluation_reasoning": "Correct formula and approach"
         },
         {
             "domain_id": domain_id,
             "question": "List all active customers in the enterprise segment",
             "ground_truth": "SELECT * FROM customers WHERE segment = 'enterprise' AND status = 'active'",
             "difficulty": "easy",
-            "last_status": "pass"
+            "last_status": "pass",
+            "last_agent_answer": "Query: SELECT * FROM customers WHERE segment='enterprise' AND status='active'",
+            "last_evaluation_reasoning": "Exact match with ground truth"
         },
         {
             "domain_id": domain_id,
             "question": "What is the customer lifetime value for cohorts acquired in 2023?",
             "ground_truth": "Calculate total revenue per customer for 2023 cohort divided by number of customers",
             "difficulty": "hard",
-            "last_status": "pass"
+            "last_status": "pass",
+            "last_agent_answer": "CLV = Total Revenue from 2023 Cohort / Number of Customers in Cohort",
+            "last_evaluation_reasoning": "Correct calculation method"
         },
         {
             "domain_id": domain_id,
             "question": "Show the conversion funnel metrics for the checkout process",
             "ground_truth": "Calculate conversion rates at each step: cart -> checkout -> payment -> confirmation",
             "difficulty": "medium",
-            "last_status": "fail"
+            "last_status": "warn",
+            "last_agent_answer": "Conversion funnel: cart → checkout → payment",
+            "last_evaluation_reasoning": "Missing final confirmation step"
         },
         {
             "domain_id": domain_id,
             "question": "What is the average basket size by customer segment?",
             "ground_truth": "Calculate AVG(order_total) GROUP BY customer_segment",
             "difficulty": "easy",
-            "last_status": "pass"
+            "last_status": "pass",
+            "last_agent_answer": "SELECT customer_segment, AVG(order_total) FROM orders GROUP BY customer_segment",
+            "last_evaluation_reasoning": "Correct SQL query structure"
+        },
+        {
+            "domain_id": domain_id,
+            "question": "Calculate monthly recurring revenue for SaaS subscriptions",
+            "ground_truth": "SUM(subscription_price) WHERE status='active' AND billing_cycle='monthly'",
+            "difficulty": "medium",
+            "last_status": "pass",
+            "last_agent_answer": "MRR = SUM of all active monthly subscription prices",
+            "last_evaluation_reasoning": "Correct MRR calculation"
+        },
+        {
+            "domain_id": domain_id,
+            "question": "Identify customers at risk of churning based on engagement metrics",
+            "ground_truth": "Analyze last_login_date, feature_usage, support_tickets to identify churn risk",
+            "difficulty": "hard",
+            "last_status": "fail",
+            "last_agent_answer": "Check last login date only",
+            "last_evaluation_reasoning": "Incomplete analysis - missing feature usage and support tickets"
+        },
+        {
+            "domain_id": domain_id,
+            "question": "What is the average response time for customer support tickets?",
+            "ground_truth": "Calculate AVG(resolution_time - created_time) for all closed tickets",
+            "difficulty": "easy",
+            "last_status": "pass",
+            "last_agent_answer": "Average response time = AVG(resolution_time - created_time)",
+            "last_evaluation_reasoning": "Correct calculation"
         }
     ]
     

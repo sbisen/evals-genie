@@ -17,7 +17,13 @@ async def connect_to_mongo():
     """Connect to MongoDB"""
     global client, database
     try:
-        client = AsyncIOMotorClient(MONGODB_URI)
+        # Add TLS configuration for compatibility with older Python/SSL versions
+        client = AsyncIOMotorClient(
+            MONGODB_URI,
+            tlsAllowInvalidCertificates=True,  # Allow self-signed certificates
+            serverSelectionTimeoutMS=5000,
+            connectTimeoutMS=5000
+        )
         database = client[DATABASE_NAME]
         # Verify connection
         await client.admin.command('ping')
