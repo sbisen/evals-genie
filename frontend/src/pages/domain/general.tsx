@@ -117,22 +117,27 @@ export default function DomainGeneral() {
         <Card className="shadow-sm border-border/60">
           <CardContent className="p-6 space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="alias">Alias:</Label>
-              <Input 
-                id="alias" 
-                value={formData.alias ?? ''} 
+              <Label htmlFor="agent_name">Agent Name/ID: *</Label>
+              <Input
+                id="agent_name"
+                placeholder="e.g., Finance Agent, DevOps Agent, Ads Agent"
+                value={formData.alias ?? ''}
                 onChange={(e) => setFormData({ ...formData, alias: e.target.value })}
-                className="max-w-md" 
+                className="max-w-md"
               />
+              <p className="text-xs text-muted-foreground">
+                This agent name will be used across all Domain Context sections (Agent I/O, User Stories, Prompts, RAG Context, Sample Q&A)
+              </p>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="description">Description:</Label>
-              <Textarea 
-                id="description" 
-                value={formData.description ?? ''} 
+              <Textarea
+                id="description"
+                placeholder="Describe what this agent does and its purpose..."
+                value={formData.description ?? ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="min-h-[100px] resize-none" 
+                className="min-h-[100px] resize-none"
               />
             </div>
           </CardContent>

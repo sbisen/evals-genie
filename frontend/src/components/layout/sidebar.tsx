@@ -121,15 +121,15 @@ export function Sidebar({ className }: SidebarProps) {
               </a>
             </Link>
 
-            {/* Context Group */}
+            {/* Domain Context Group */}
             <div className="pt-2">
-              <button 
+              <button
                 onClick={() => setIsContextOpen(!isContextOpen)}
                 className="flex w-full items-center justify-between px-2 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground rounded-md hover:bg-sidebar-accent/50"
               >
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4" />
-                  Context
+                  Domain Context
                 </div>
                 {isContextOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
               </button>

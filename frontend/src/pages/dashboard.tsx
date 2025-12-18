@@ -1,12 +1,12 @@
 import { Layout } from "@/components/layout/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, CheckCircle, TrendingUp, AlertTriangle, ArrowRight, Target, Clock } from "lucide-react";
+import { Bot, CheckCircle, TrendingUp, AlertTriangle, ArrowRight, Target, Clock, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Spinner } from "@/components/ui/spinner";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 export default function Dashboard() {
   // Fetch dashboard stats
@@ -31,6 +31,14 @@ export default function Dashboard() {
     { month: 'Jun', 'Finance Agent': 97, 'DevOps Agent': 91, 'Ads Agent': 92, 'Engineering Agent': 96 },
   ];
 
+  // Mock data for weekly active users
+  const weeklyActiveUsersData = [
+    { week: 'Week 1', 'Finance Agent': 1250, 'DevOps Agent': 980, 'Ads Agent': 1450, 'Engineering Agent': 1120 },
+    { week: 'Week 2', 'Finance Agent': 1380, 'DevOps Agent': 1050, 'Ads Agent': 1520, 'Engineering Agent': 1200 },
+    { week: 'Week 3', 'Finance Agent': 1420, 'DevOps Agent': 1100, 'Ads Agent': 1580, 'Engineering Agent': 1280 },
+    { week: 'Week 4', 'Finance Agent': 1550, 'DevOps Agent': 1180, 'Ads Agent': 1650, 'Engineering Agent': 1350 },
+  ];
+
   const isLoading = isLoadingStats || isLoadingEvals;
 
   if (isLoading) {
@@ -48,7 +56,7 @@ export default function Dashboard() {
       <div className="p-8 max-w-[1400px] mx-auto space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard: Post Launch</h1>
           <p className="text-gray-600 mt-1">Overview of AI agent evaluation performance across your enterprise</p>
         </div>
 
@@ -144,6 +152,86 @@ export default function Dashboard() {
                   <TrendingUp className="w-6 h-6 text-orange-600" />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* User Feedback Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Thumbs Up vs Down */}
+          <Card className="border border-gray-200 shadow-sm">
+            <CardHeader className="border-b border-gray-100 pb-4">
+              <CardTitle className="text-xl font-bold">User Feedback</CardTitle>
+              <p className="text-sm text-gray-600 mt-1">Overall user satisfaction across all agents</p>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="flex flex-col items-center justify-center p-6 bg-green-50 rounded-lg">
+                  <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                    <ThumbsUp className="w-8 h-8 text-green-600" />
+                  </div>
+                  <p className="text-4xl font-bold text-green-600 mb-2">8,547</p>
+                  <p className="text-sm text-gray-600 font-medium">Positive Feedback</p>
+                  <p className="text-xs text-green-600 mt-1">↑ 12% from last month</p>
+                </div>
+                <div className="flex flex-col items-center justify-center p-6 bg-red-50 rounded-lg">
+                  <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                    <ThumbsDown className="w-8 h-8 text-red-600" />
+                  </div>
+                  <p className="text-4xl font-bold text-red-600 mb-2">1,243</p>
+                  <p className="text-sm text-gray-600 font-medium">Negative Feedback</p>
+                  <p className="text-xs text-red-600 mt-1">↓ 8% from last month</p>
+                </div>
+              </div>
+              <div className="mt-6 pt-6 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-gray-600">Satisfaction Rate</span>
+                  <span className="text-lg font-bold text-gray-900">87.3%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="bg-green-600 h-3 rounded-full" style={{ width: '87.3%' }}></div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Weekly Active Users */}
+          <Card className="border border-gray-200 shadow-sm">
+            <CardHeader className="border-b border-gray-100 pb-4">
+              <CardTitle className="text-xl font-bold">Weekly Active Users</CardTitle>
+              <p className="text-sm text-gray-600 mt-1">User engagement across different agents over the last 4 weeks</p>
+            </CardHeader>
+            <CardContent className="p-6">
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={weeklyActiveUsersData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis
+                    dataKey="week"
+                    stroke="#6b7280"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis
+                    stroke="#6b7280"
+                    style={{ fontSize: '12px' }}
+                    label={{ value: 'Active Users', angle: -90, position: 'insideLeft', style: { fontSize: '12px', fill: '#6b7280' } }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                    }}
+                  />
+                  <Legend
+                    wrapperStyle={{ fontSize: '12px' }}
+                  />
+                  <Bar dataKey="Finance Agent" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="DevOps Agent" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Ads Agent" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Engineering Agent" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>

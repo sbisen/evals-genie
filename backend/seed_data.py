@@ -142,21 +142,6 @@ async def seed_context_data():
             "domain_id": domain_id,
             "question": "How many new customers did we acquire last month compared to the same month last year?",
             "golden_answer": "Last month we acquired 1,247 new customers, which is a 18% increase compared to the same month last year when we acquired 1,056 new customers. This represents an additional 191 customers year-over-year."
-        },
-        {
-            "domain_id": domain_id,
-            "question": "What is the churn rate for enterprise customers in the last 6 months?",
-            "golden_answer": "The churn rate for enterprise customers in the last 6 months is 3.2%, which is below our target threshold of 5%. This represents 12 churned customers out of 375 total enterprise accounts."
-        },
-        {
-            "domain_id": domain_id,
-            "question": "Which product categories have the highest return rate?",
-            "golden_answer": "The product categories with the highest return rates are: 1) Apparel (8.5%), 2) Electronics Accessories (6.2%), 3) Home Decor (5.8%), 4) Footwear (5.1%), and 5) Small Appliances (4.7%). The overall average return rate across all categories is 3.9%."
-        },
-        {
-            "domain_id": domain_id,
-            "question": "What is the average time to resolution for customer support tickets by priority level?",
-            "golden_answer": "Average resolution times by priority: Critical - 2.3 hours, High - 8.5 hours, Medium - 24.7 hours, Low - 48.2 hours. Critical tickets are resolved 91% faster than our SLA target of 4 hours."
         }
     ]
     

@@ -463,6 +463,16 @@ export const api = {
     },
 
     /**
+     * Update a training example
+     */
+    update: async (domainId: string, exampleId: string, data: Partial<TrainingExampleCreate>): Promise<TrainingExample> => {
+      return apiFetch<TrainingExample>(`/api/v1/domains/${domainId}/training-examples/${exampleId}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+    },
+
+    /**
      * Delete a training example
      */
     delete: async (domainId: string, exampleId: string): Promise<{ message: string }> => {

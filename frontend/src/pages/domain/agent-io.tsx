@@ -26,6 +26,13 @@ export default function AgentIO() {
     enabled: !!domainId,
   });
 
+  // Fetch domain to get agent name
+  const { data: domain } = useQuery({
+    queryKey: ["domain", domainId],
+    queryFn: () => api.domains.get(domainId),
+    enabled: !!domainId,
+  });
+
   // Create mutation
   const createMutation = useMutation({
     mutationFn: (data: { input: string; output: string }) =>
@@ -83,6 +90,14 @@ export default function AgentIO() {
   return (
     <Layout>
       <div className="p-8 max-w-6xl mx-auto space-y-6">
+        {domain?.alias && (
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-indigo-900">Agent:</span>
+              <span className="text-sm font-bold text-indigo-600">{domain.alias}</span>
+            </div>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Agent Input/Output Samples</h1>
