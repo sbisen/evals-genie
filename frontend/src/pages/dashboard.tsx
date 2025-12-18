@@ -56,7 +56,7 @@ export default function Dashboard() {
       <div className="p-8 max-w-[1400px] mx-auto space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard: Post Launch</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Eval Metrics Dashboard</h1>
           <p className="text-gray-600 mt-1">Overview of AI agent evaluation performance across your enterprise</p>
         </div>
 

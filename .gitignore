@@ -26,8 +26,6 @@ ENV/
 env/
 
 # Environment variables
-.env
-.env.local
 .env.*.local
 
 # IDEs
@@ -100,3 +98,4 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+config.bat

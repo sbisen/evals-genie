@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Play, CheckCircle2, XCircle, AlertCircle, Plus, Trash2, CheckCircle } from "lucide-react";
+import { Play, CheckCircle2, XCircle, AlertCircle, Plus, Trash2, CheckCircle, Sparkles } from "lucide-react";
 import { useRoute } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, TestSet, TestSetCreate } from "@/lib/api";
@@ -157,9 +157,13 @@ export default function TestSets() {
               className="gap-2 bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 px-8 py-6 text-lg"
               onClick={() => setShowTestSets(true)}
             >
-              <Play className="w-5 h-5" />
+              <Sparkles className="w-5 h-5" />
               Generate Golden Testset
             </Button>
+            <p className="text-sm text-muted-foreground mt-3 flex items-center gap-1.5 justify-center">
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+              AI-Generated & Human-Reviewed
+            </p>
           </div>
         ) : (
           <>

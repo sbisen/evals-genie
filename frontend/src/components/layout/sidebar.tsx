@@ -136,34 +136,28 @@ export function Sidebar({ className }: SidebarProps) {
               
               {isContextOpen && (
                 <div className="mt-1 ml-4 pl-2 border-l border-sidebar-border space-y-1">
-                  <Link href={`/domain/${selectedDomain}/agent-io`}>
+                  <Link href={`/domain/${selectedDomain}/training`}>
                     <a className={cn("block px-2 py-1.5 text-sm rounded-md transition-colors",
-                      isActive(`/domain/${selectedDomain}/agent-io`) ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
-                      1. Agent I/O
+                      isActive(`/domain/${selectedDomain}/training`) ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
+                      1. Agent Sample QnA
                     </a>
                   </Link>
                   <Link href={`/domain/${selectedDomain}/user-stories`}>
                     <a className={cn("block px-2 py-1.5 text-sm rounded-md transition-colors",
                       isActive(`/domain/${selectedDomain}/user-stories`) ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
-                      2. User Stories
+                      2. Use Cases
                     </a>
                   </Link>
                   <Link href={`/domain/${selectedDomain}/prompts`}>
                     <a className={cn("block px-2 py-1.5 text-sm rounded-md transition-colors",
                       isActive(`/domain/${selectedDomain}/prompts`) ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
-                      3. Prompt / Code
+                      3. Prompts
                     </a>
                   </Link>
                    <Link href={`/domain/${selectedDomain}/rag-context`}>
                     <a className={cn("block px-2 py-1.5 text-sm rounded-md transition-colors",
                       isActive(`/domain/${selectedDomain}/rag-context`) ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
                       4. RAG Context
-                    </a>
-                  </Link>
-                  <Link href={`/domain/${selectedDomain}/training`}>
-                    <a className={cn("block px-2 py-1.5 text-sm rounded-md transition-colors",
-                      isActive(`/domain/${selectedDomain}/training`) ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
-                      5. Sample Q&A
                     </a>
                   </Link>
                 </div>
@@ -194,7 +188,7 @@ export function Sidebar({ className }: SidebarProps) {
                   <Link href="/dashboard">
                     <a className={cn("block px-2 py-1.5 text-sm rounded-md transition-colors",
                       isActive("/dashboard") ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
-                      Dashboard
+                      Eval Metrics Dashboard
                     </a>
                   </Link>
                 </div>
