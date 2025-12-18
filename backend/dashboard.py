@@ -103,7 +103,7 @@ async def get_dashboard_stats(current_user: User = Depends(get_current_user)) ->
         "pass_rate_trend": 3.2,  # Positive trend
         "high_risk_agents": high_risk_count,
         "hallucination_rate": 4.8,  # Low hallucination rate (optimistic)
-        "consistency_rate": 94.2  # High consistency rate (optimistic)
+        "avg_latency": 15.2  # Average latency in seconds (optimistic)
     }
 
 

@@ -225,7 +225,7 @@ export interface DashboardStats {
   pass_rate_trend: number;
   high_risk_agents: number;
   hallucination_rate: number;
-  consistency_rate: number;
+  avg_latency: number;
 }
 
 export interface RecentEvaluation {

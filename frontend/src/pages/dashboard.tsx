@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, CheckCircle, TrendingUp, AlertTriangle, ArrowRight, Target, Shield } from "lucide-react";
+import { Bot, CheckCircle, TrendingUp, AlertTriangle, ArrowRight, Target, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -117,16 +117,16 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Consistency Rate */}
+          {/* Average Latency */}
           <Card className="border border-gray-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">Consistency</p>
-                  <p className="text-4xl font-bold text-gray-900">{stats?.consistency_rate || 0}%</p>
+                  <p className="text-sm font-medium text-gray-600 mb-2">Latency</p>
+                  <p className="text-4xl font-bold text-gray-900">{stats?.avg_latency || 0}s</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-indigo-600" />
+                  <Clock className="w-6 h-6 text-indigo-600" />
                 </div>
               </div>
             </CardContent>
