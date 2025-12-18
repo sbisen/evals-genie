@@ -62,7 +62,7 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
         <div className="font-semibold text-sm tracking-tight">
           <div className="text-sidebar-foreground">EvalsGenie</div>
-          <div className="text-xs text-muted-foreground font-normal">DomainEval</div>
+          <div className="text-xs text-muted-foreground font-normal">EvalsGenie</div>
         </div>
       </div>
 
@@ -78,13 +78,6 @@ export function Sidebar({ className }: SidebarProps) {
                 isActive("/") ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50")}>
                 <Home className="w-4 h-4" />
                 Home
-              </a>
-            </Link>
-            <Link href="/dashboard">
-              <a className={cn("flex items-center gap-2 px-2 py-1.5 text-sm font-medium rounded-md transition-colors",
-                isActive("/dashboard") ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50")}>
-                <LayoutDashboard className="w-4 h-4" />
-                Dashboard
               </a>
             </Link>
           </nav>
@@ -195,13 +188,13 @@ export function Sidebar({ className }: SidebarProps) {
                   <Link href={`/domain/${selectedDomain}/test-sets`}>
                     <a className={cn("block px-2 py-1.5 text-sm rounded-md transition-colors",
                       isActive(`/domain/${selectedDomain}/test-sets`) ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
-                      Test Sets (GT)
+                      Golden Test Set
                     </a>
                   </Link>
-                  <Link href={`/domain/${selectedDomain}/metrics`}>
+                  <Link href="/dashboard">
                     <a className={cn("block px-2 py-1.5 text-sm rounded-md transition-colors",
-                      isActive(`/domain/${selectedDomain}/metrics`) ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
-                      Metrics Dashboard
+                      isActive("/dashboard") ? "text-indigo-600 font-medium bg-indigo-50/50" : "text-muted-foreground hover:text-foreground")}>
+                      Dashboard
                     </a>
                   </Link>
                 </div>

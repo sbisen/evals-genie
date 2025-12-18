@@ -202,9 +202,14 @@ async def list_training_examples(domain_id: str, current_user: dict = Depends(ge
     """List all training examples for a domain"""
     collection = get_collection("training_examples")
     examples = await collection.find({"domain_id": domain_id}).to_list(length=None)
-    return [TrainingExample(id=str(e["_id"]), domain_id=e["domain_id"],
-                           question=e["question"], type=e["type"], 
-                           tables=e["tables"]) for e in examples]
+    return [TrainingExample(
+        id=str(e["_id"]),
+        domain_id=e["domain_id"],
+        question=e["question"],
+        golden_answer=e.get("golden_answer", ""),
+        type=e.get("type"),
+        tables=e.get("tables")
+    ) for e in examples]
 
 
 @router.post("/domains/{domain_id}/training-examples", response_model=TrainingExample)
@@ -221,13 +226,20 @@ async def create_training_example(
         "_id": example_id,
         "domain_id": domain_id,
         "question": data.question,
+        "golden_answer": data.golden_answer,
         "type": data.type,
         "tables": data.tables
     }
     
     await collection.insert_one(example_doc)
-    return TrainingExample(id=example_id, domain_id=domain_id,
-                          question=data.question, type=data.type, tables=data.tables)
+    return TrainingExample(
+        id=example_id,
+        domain_id=domain_id,
+        question=data.question,
+        golden_answer=data.golden_answer,
+        type=data.type,
+        tables=data.tables
+    )
 
 
 @router.delete("/domains/{domain_id}/training-examples/{example_id}")

@@ -154,14 +154,16 @@ export interface TrainingExample {
   id: string;
   domain_id: string;
   question: string;
-  type: string;
-  tables: string[];
+  golden_answer: string;
+  type?: string;
+  tables?: string[];
 }
 
 export interface TrainingExampleCreate {
   question: string;
-  type: string;
-  tables: string[];
+  golden_answer: string;
+  type?: string;
+  tables?: string[];
 }
 
 /**
@@ -185,6 +187,7 @@ export interface TestSet {
   ground_truth: string;
   difficulty: string;
   last_status?: string | null;
+  confidence_score?: number | null;
 }
 
 export interface TestSetCreate {
@@ -221,6 +224,8 @@ export interface DashboardStats {
   pass_rate: number;
   pass_rate_trend: number;
   high_risk_agents: number;
+  hallucination_rate: number;
+  consistency_rate: number;
 }
 
 export interface RecentEvaluation {

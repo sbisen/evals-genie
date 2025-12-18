@@ -11,7 +11,7 @@ export default function Landing() {
            <div className="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center overflow-hidden">
                <img src={logo} alt="Logo" className="w-full h-full object-cover" />
            </div>
-           <div className="font-bold text-xl tracking-tight">DomainEval</div>
+           <div className="font-bold text-xl tracking-tight">EvalsGenie</div>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/login"><a className="text-sm font-medium text-muted-foreground hover:text-foreground">Sign In</a></Link>

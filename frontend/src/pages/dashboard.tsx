@@ -1,11 +1,12 @@
 import { Layout } from "@/components/layout/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, CheckCircle, TrendingUp, AlertTriangle, ArrowRight } from "lucide-react";
+import { Bot, CheckCircle, TrendingUp, AlertTriangle, ArrowRight, Target, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Spinner } from "@/components/ui/spinner";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
   // Fetch dashboard stats
@@ -20,13 +21,17 @@ export default function Dashboard() {
     queryFn: () => api.dashboard.getRecentEvaluations(5),
   });
 
-  // Fetch high risk agents
-  const { data: highRiskAgents, isLoading: isLoadingRisk } = useQuery({
-    queryKey: ['high-risk-agents'],
-    queryFn: () => api.dashboard.getHighRiskAgents(),
-  });
+  // Mock data for agent performance over months
+  const agentPerformanceData = [
+    { month: 'Jan', 'Finance Agent': 92, 'DevOps Agent': 88, 'Ads Agent': 85, 'Engineering Agent': 90 },
+    { month: 'Feb', 'Finance Agent': 94, 'DevOps Agent': 87, 'Ads Agent': 88, 'Engineering Agent': 91 },
+    { month: 'Mar', 'Finance Agent': 93, 'DevOps Agent': 90, 'Ads Agent': 86, 'Engineering Agent': 93 },
+    { month: 'Apr', 'Finance Agent': 95, 'DevOps Agent': 89, 'Ads Agent': 90, 'Engineering Agent': 94 },
+    { month: 'May', 'Finance Agent': 96, 'DevOps Agent': 92, 'Ads Agent': 89, 'Engineering Agent': 95 },
+    { month: 'Jun', 'Finance Agent': 97, 'DevOps Agent': 91, 'Ads Agent': 92, 'Engineering Agent': 96 },
+  ];
 
-  const isLoading = isLoadingStats || isLoadingEvals || isLoadingRisk;
+  const isLoading = isLoadingStats || isLoadingEvals;
 
   if (isLoading) {
     return (
@@ -48,7 +53,7 @@ export default function Dashboard() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Total Agents */}
           <Card className="border border-gray-200 shadow-sm">
             <CardContent className="p-6">
@@ -79,19 +84,49 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Evaluation Pass Rate */}
+          {/* Accuracy Rate (renamed from Evaluation Pass Rate) */}
           <Card className="border border-gray-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">Evaluation Pass Rate</p>
+                  <p className="text-sm font-medium text-gray-600 mb-2">Accuracy Rate</p>
                   <p className="text-4xl font-bold text-gray-900">{stats?.pass_rate || 0}%</p>
                   <p className="text-sm text-green-600 font-medium mt-1 flex items-center gap-1">
                     ↑ {stats?.pass_rate_trend || 0}%
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-purple-600" />
+                  <Target className="w-6 h-6 text-purple-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Hallucination Rate */}
+          <Card className="border border-gray-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-2">Hallucination</p>
+                  <p className="text-4xl font-bold text-gray-900">{stats?.hallucination_rate || 0}%</p>
+                </div>
+                <div className="w-12 h-12 rounded-lg bg-red-50 flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Consistency Rate */}
+          <Card className="border border-gray-200 shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-2">Consistency</p>
+                  <p className="text-4xl font-bold text-gray-900">{stats?.consistency_rate || 0}%</p>
+                </div>
+                <div className="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-indigo-600" />
                 </div>
               </div>
             </CardContent>
@@ -106,7 +141,7 @@ export default function Dashboard() {
                   <p className="text-4xl font-bold text-gray-900">{stats?.high_risk_agents || 0}</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center">
-                  <AlertTriangle className="w-6 h-6 text-orange-600" />
+                  <TrendingUp className="w-6 h-6 text-orange-600" />
                 </div>
               </div>
             </CardContent>
@@ -141,8 +176,14 @@ export default function Dashboard() {
                       <p className="text-xs text-gray-500">Score</p>
                     </div>
                     <Badge
-                      variant={evaluation.status === "Passed" ? "default" : "destructive"}
-                      className={evaluation.status === "Passed" ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-red-100 text-red-800 hover:bg-red-100"}
+                      variant={evaluation.status === "Passed" ? "default" : evaluation.status === "Partial" ? "secondary" : "destructive"}
+                      className={
+                        evaluation.status === "Passed"
+                          ? "bg-green-100 text-green-800 hover:bg-green-100"
+                          : evaluation.status === "Partial"
+                          ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                          : "bg-red-100 text-red-800 hover:bg-red-100"
+                      }
                     >
                       {evaluation.status}
                     </Badge>
@@ -155,43 +196,77 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* High Risk Agents */}
+          {/* Agent Performance Over Time */}
           <Card className="border border-gray-200 shadow-sm">
             <CardHeader className="border-b border-gray-100 pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-xl font-bold">High Risk Agents</CardTitle>
-                <Button variant="ghost" className="text-sm text-gray-600 hover:text-gray-900">
-                  View All
-                  <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
+                <div>
+                  <CardTitle className="text-xl font-bold">Agent Performance Trends</CardTitle>
+                  <p className="text-sm text-gray-600 mt-1">Pass rate performance across different agents over the last 6 months</p>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="p-6">
-              {highRiskAgents && highRiskAgents.length > 0 ? (
-                highRiskAgents.map((agent) => (
-                  <div key={agent.id} className="space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">{agent.name}</h3>
-                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                          {agent.category}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600">{agent.description}</p>
-                      <p className="text-sm text-gray-500 mt-2">
-                        Pass Rate: {agent.passRate}% • Evals: {agent.evals}
-                      </p>
-                    </div>
-                    <Badge variant="destructive" className="bg-orange-100 text-orange-800 hover:bg-orange-100 ml-4">
-                      {agent.risk}
-                    </Badge>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-gray-500 text-center py-4">No high risk agents</p>
-              )}
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={agentPerformanceData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis
+                    dataKey="month"
+                    stroke="#6b7280"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis
+                    stroke="#6b7280"
+                    style={{ fontSize: '12px' }}
+                    domain={[80, 100]}
+                    label={{ value: 'Pass Rate (%)', angle: -90, position: 'insideLeft', style: { fontSize: '12px', fill: '#6b7280' } }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                    }}
+                  />
+                  <Legend
+                    wrapperStyle={{ fontSize: '12px' }}
+                    iconType="line"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Finance Agent"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    dot={{ fill: '#3b82f6', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="DevOps Agent"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                    dot={{ fill: '#10b981', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Ads Agent"
+                    stroke="#f59e0b"
+                    strokeWidth={2}
+                    dot={{ fill: '#f59e0b', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Engineering Agent"
+                    stroke="#8b5cf6"
+                    strokeWidth={2}
+                    dot={{ fill: '#8b5cf6', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>

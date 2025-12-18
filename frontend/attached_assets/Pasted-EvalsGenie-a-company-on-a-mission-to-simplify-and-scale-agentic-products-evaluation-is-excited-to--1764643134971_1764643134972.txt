@@ -1,24 +1,24 @@
-EvalsGenie, a company on a mission to simplify and scale agentic products evaluation, is excited to introduce DomainEval — a domain-aware, no-code AI evaluation platform that empowers enterprise teams to validate AI agents across departments like Finance, DevOps, Ads, and Engineering.
-DomainEval helps AI teams generate evaluation question sets, recommended metrics, and production-readiness decision boards — all tailored to the context of their domain. Built for both technical and non-technical users, DomainEval makes scalable agent evaluation finally achievable.
+EvalsGenie, a company on a mission to simplify and scale agentic products evaluation, is excited to introduce EvalsGenie — a domain-aware, no-code AI evaluation platform that empowers enterprise teams to validate AI agents across departments like Finance, DevOps, Ads, and Engineering.
+EvalsGenie helps AI teams generate evaluation question sets, recommended metrics, and production-readiness decision boards — all tailored to the context of their domain. Built for both technical and non-technical users, EvalsGenie makes scalable agent evaluation finally achievable.
 
-"Agent deployments are growing fast, but the evaluation process hasn’t caught up. It’s still manual, inconsistent, and siloed,” said [Slarra], [CEO] at EvalsGenie. “DomainEval is the magical assistant that helps teams validate agent readiness — in context, at scale, without writing a line of code.
+"Agent deployments are growing fast, but the evaluation process hasn't caught up. It's still manual, inconsistent, and siloed," said [Slarra], [CEO] at EvalsGenie. "EvalsGenie is the magical assistant that helps teams validate agent readiness — in context, at scale, without writing a line of code.
 
 Features and Benefits:
-Domain-Aware Evaluation test set generation: Upload in UI - user stories, your agent basic info, domain examples, and our DomainEval generates relevant, targeted evaluation question sets
+Domain-Aware Evaluation test set generation: Upload in UI - user stories, your agent basic info, domain examples, and our EvalsGenie generates relevant, targeted evaluation question sets
 Built-in Metrics and Decision Dashboard: Get auto-suggested metrics tailored to the domain (e.g., hallucination rate, latency, factuality) and track agent readiness for production
 No-Code/Drag-and-Drop UI - Non-technical stakeholders (PMs, QA, Analysts) can generate and run evaluations with a few clicks — no scripts or coding needed.
-Grounded in Best Practices: DomainEval uses built-in industry knowledge to recommend high-quality evaluation templates, eliminating guesswork.
+Grounded in Best Practices: EvalsGenie uses built-in industry knowledge to recommend high-quality evaluation templates, eliminating guesswork.
 Enterprise-Wide Scalability and Customization: Standardize evaluation workflows across teams while customizing output to the context of each department.
 Real-Time Testing: Instantly test and refine Agent prompt and tooling, ensuring optimal performance.
 
 
 FAQs
-What exactly is DomainEval? 
-DomainEval is EvalsGenie’s flagship product — a domain-specific AI evaluation platform that generates tailored eval sets, metrics, and production-readiness dashboards for AI agents. It enables scalable, accurate agent evaluation across departments in an enterprise.
-Why did EvalsGenie create DomainEval?
-Enterprises are deploying agents across teams — but evaluating them is still a manual, inconsistent process. The eval process gets slow with outdated test sets because the AI team is smaller compared to the agentic product demand in multiple departments. Every domain (finance, DevOps, ads) has unique expectations. DomainEval automates evaluation generation with domain context in mind, helping teams validate agents faster and smarter.
-How is DomainEval different from other evaluation tools?
-Most tools are generic, code-heavy, or lack domain awareness. DomainEval:
+What exactly is EvalsGenie?
+EvalsGenie is a domain-specific AI evaluation platform that generates tailored eval sets, metrics, and production-readiness dashboards for AI agents. It enables scalable, accurate agent evaluation across departments in an enterprise.
+Why was EvalsGenie created?
+Enterprises are deploying agents across teams — but evaluating them is still a manual, inconsistent process. The eval process gets slow with outdated test sets because the AI team is smaller compared to the agentic product demand in multiple departments. Every domain (finance, DevOps, ads) has unique expectations. EvalsGenie automates evaluation generation with domain context in mind, helping teams validate agents faster and smarter.
+How is EvalsGenie different from other evaluation tools?
+Most tools are generic, code-heavy, or lack domain awareness. EvalsGenie:
 Accepts user stories, prompts, and RAG context as inputs
 Auto-generates evaluation questions tailored to the use case
 Recommends the right metrics per domain
@@ -32,18 +32,18 @@ User stories
 Prompt or code (optional)
 RAG context documents or key terms
 1–3 sample Q&A pairs
-Then, DomainEval generates:
+Then, EvalsGenie generates:
 Domain-specific eval questions
 Suggested metrics
 A production readiness dashboard
-How does DomainEval handle data privacy and security? 
-EvalsGenie prioritizes data protection. DomainEval offers:
+How does EvalsGenie handle data privacy and security?
+EvalsGenie prioritizes data protection. EvalsGenie offers:
 End-to-end encryption (data in transit and at rest)
 Secure handling of all uploaded documents
 Support for private cloud or on-prem deployments for enterprises
 Descriptions (for internal use):
 Company Name: EvalsGenie
-Product Name: DomainEval
+Product Name: EvalsGenie
 Industry/Field Name: Enterprise AI, LLM Agent Evaluation
 Release Date: Dec 19, 2025
 

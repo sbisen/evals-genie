@@ -21,6 +21,8 @@ export default function TestSets() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [showTestSets, setShowTestSets] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [newTestSet, setNewTestSet] = useState<TestSetCreate>({
     question: "",
     ground_truth: "",
@@ -42,7 +44,7 @@ export default function TestSets() {
   });
 
   // Calculate production readiness
-  const isProductionReady = metrics && metrics.pass_rate >= 95;
+  const isProductionReady = metrics && metrics.pass_rate >= 90;
   const readinessStatus = isProductionReady ? "Production Ready" : "Needs Improvement";
 
   // Create test set mutation
@@ -90,6 +92,8 @@ export default function TestSets() {
     mutationFn: () => api.evaluation.run(domainId!),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["testSets", domainId] });
+      queryClient.invalidateQueries({ queryKey: ["metrics", domainId] });
+      setShowResults(true);
       toast({
         title: "Success",
         description: `Evaluation completed! Evaluated ${(data as any).test_sets_evaluated} test sets.`,
@@ -139,13 +143,32 @@ export default function TestSets() {
   return (
     <Layout>
       <div className="p-8 max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Ground Truth Test Set</h1>
-            <p className="text-muted-foreground">Generated evaluation questions and expected answers.</p>
+        {!showTestSets ? (
+          <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
+            <div className="text-center space-y-3">
+              <h1 className="text-3xl font-bold tracking-tight">Golden Test Set (Ground Truth)</h1>
+              <p className="text-muted-foreground text-lg max-w-2xl">
+                Generate evaluation questions and expected answers to test your AI agent's performance and accuracy.
+              </p>
+            </div>
+            <Button
+              size="lg"
+              className="gap-2 bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 px-8 py-6 text-lg"
+              onClick={() => setShowTestSets(true)}
+            >
+              <Play className="w-5 h-5" />
+              Generate Golden Test Set
+            </Button>
           </div>
-          <div className="flex gap-2">
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        ) : (
+          <>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">Golden Test Set (Ground Truth)</h1>
+                <p className="text-muted-foreground">Generated evaluation questions and expected answers.</p>
+              </div>
+              <div className="flex gap-2">
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" className="gap-2">
                   <Plus className="w-4 h-4" />
@@ -171,7 +194,7 @@ export default function TestSets() {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="ground_truth">Ground Truth Answer *</Label>
+                    <Label htmlFor="ground_truth">Golden Answer *</Label>
                     <Textarea
                       id="ground_truth"
                       placeholder="Enter expected answer..."
@@ -219,7 +242,7 @@ export default function TestSets() {
         </div>
 
         {/* Production Readiness Section */}
-        {metrics && (
+        {showResults && metrics && (
           <Card className="border-2 border-green-200 bg-green-50/30">
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-6">
@@ -254,9 +277,9 @@ export default function TestSets() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Metrics:</h3>
                 <div className="grid grid-cols-2 gap-x-12 gap-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Pass Rate:</span>
+                    <span className="text-gray-700">Accuracy:</span>
                     <span className={`font-semibold text-lg ${
-                      metrics.pass_rate >= 95 ? "text-green-600" : "text-amber-600"
+                      metrics.pass_rate >= 90 ? "text-green-600" : "text-amber-600"
                     }`}>
                       {metrics.pass_rate.toFixed(1)}%
                     </span>
@@ -270,7 +293,7 @@ export default function TestSets() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Factuality:</span>
+                    <span className="text-gray-700">Confidence Score:</span>
                     <span className="font-semibold text-lg text-green-600">
                       {(100 - metrics.hallucination_rate).toFixed(1)}%
                     </span>
@@ -291,13 +314,13 @@ export default function TestSets() {
                     <li>Continue monitoring performance to maintain production quality</li>
                   ) : (
                     <>
-                      {metrics.pass_rate < 95 && (
-                        <li>Improve pass rate to at least 95% before production deployment</li>
+                      {metrics.pass_rate < 90 && (
+                        <li>Improve accuracy to at least baseline 90% before production deployment</li>
                       )}
                       {metrics.hallucination_rate > 5 && (
-                        <li>Reduce hallucination rate to below 5% for production readiness</li>
+                        <li>Reduce hallucination rate to below 5% for production readiness by grounding the prompt with actual data variables</li>
                       )}
-                      <li>Add more test cases to improve coverage and reliability</li>
+                      <li>Add more test cases to improve coverage and reliability for edge cases</li>
                     </>
                   )}
                 </ul>
@@ -318,9 +341,9 @@ export default function TestSets() {
               <TableHeader className="bg-slate-50/50">
                 <TableRow>
                   <TableHead className="w-[400px]">Evaluation Question</TableHead>
-                  <TableHead className="w-[300px]">Ground Truth Answer</TableHead>
-                  <TableHead className="w-[100px]">Difficulty</TableHead>
-                  <TableHead>Last Result</TableHead>
+                  <TableHead className="w-[300px]">Golden Answer</TableHead>
+                  {showResults && <TableHead>Last Result</TableHead>}
+                  {showResults && <TableHead className="w-[140px]">Confidence Score</TableHead>}
                   <TableHead className="w-[80px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -329,16 +352,22 @@ export default function TestSets() {
                   <TableRow key={testSet.id}>
                     <TableCell className="font-medium py-4">{testSet.question}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{testSet.ground_truth}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="font-normal bg-slate-50 capitalize">
-                        {testSet.difficulty}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {testSet.last_status ? getStatusIcon(testSet.last_status) : (
-                        <span className="text-sm text-muted-foreground">Not evaluated</span>
-                      )}
-                    </TableCell>
+                    {showResults && (
+                      <TableCell>
+                        {testSet.last_status ? getStatusIcon(testSet.last_status) : (
+                          <span className="text-sm text-muted-foreground">Not evaluated</span>
+                        )}
+                      </TableCell>
+                    )}
+                    {showResults && (
+                      <TableCell>
+                        {testSet.confidence_score !== null && testSet.confidence_score !== undefined ? (
+                          <span className="text-sm font-medium">{testSet.confidence_score.toFixed(1)}%</span>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                    )}
                     <TableCell>
                       <Button
                         variant="ghost"
@@ -355,6 +384,8 @@ export default function TestSets() {
             </Table>
           )}
         </div>
+          </>
+        )}
       </div>
     </Layout>
   );

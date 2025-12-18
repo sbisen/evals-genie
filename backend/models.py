@@ -112,15 +112,17 @@ class TrainingExample(BaseModel):
     id: str = Field(..., description="Example ID")
     domain_id: str = Field(..., description="Domain ID this example belongs to")
     question: str = Field(..., description="Training question")
-    type: str = Field(..., description="Question type")
-    tables: list[str] = Field(..., description="List of table names")
+    golden_answer: str = Field(..., description="Golden/expected answer")
+    type: Optional[str] = Field(default=None, description="Question type")
+    tables: Optional[list[str]] = Field(default=None, description="List of table names")
 
 
 class TrainingExampleCreate(BaseModel):
     """Model for creating Training Example"""
     question: str = Field(..., description="Training question")
-    type: str = Field(..., description="Question type")
-    tables: list[str] = Field(..., description="List of table names")
+    golden_answer: str = Field(..., description="Golden/expected answer")
+    type: Optional[str] = Field(default=None, description="Question type")
+    tables: Optional[list[str]] = Field(default=None, description="List of table names")
 
 
 class RagDocument(BaseModel):
@@ -145,6 +147,7 @@ class TestSet(BaseModel):
     last_agent_answer: Optional[str] = Field(default=None, description="Last agent-generated answer")
     last_evaluation_reasoning: Optional[str] = Field(default=None, description="Reasoning for last evaluation")
     last_run_id: Optional[str] = Field(default=None, description="ID of the last evaluation run")
+    confidence_score: Optional[float] = Field(default=None, description="Confidence score (0-100)")
 
 
 class TestSetCreate(BaseModel):

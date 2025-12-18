@@ -19,10 +19,8 @@ export default function DomainTraining() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<TrainingExampleCreate>({
     question: "",
-    type: "",
-    tables: [],
+    golden_answer: "",
   });
-  const [newTable, setNewTable] = useState("");
 
   // Fetch training examples
   const { data: examples = [], isLoading } = useQuery({
@@ -38,8 +36,7 @@ export default function DomainTraining() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trainingExamples", domainId] });
       setIsDialogOpen(false);
-      setFormData({ question: "", type: "", tables: [] });
-      setNewTable("");
+      setFormData({ question: "", golden_answer: "" });
       toast({
         title: "Success",
         description: "Training example created successfully",
@@ -75,26 +72,15 @@ export default function DomainTraining() {
   });
 
   const handleCreate = () => {
-    if (!formData.question.trim() || !formData.type.trim() || formData.tables.length === 0) {
+    if (!formData.question.trim() || !formData.golden_answer.trim()) {
       toast({
         title: "Error",
-        description: "All fields are required and at least one table must be added",
+        description: "Question and Golden Answer are required",
         variant: "destructive",
       });
       return;
     }
     createMutation.mutate(formData);
-  };
-
-  const handleAddTable = () => {
-    if (newTable.trim() && !formData.tables.includes(newTable.trim())) {
-      setFormData({ ...formData, tables: [...formData.tables, newTable.trim()] });
-      setNewTable("");
-    }
-  };
-
-  const handleRemoveTable = (table: string) => {
-    setFormData({ ...formData, tables: formData.tables.filter((t) => t !== table) });
   };
 
   return (
@@ -127,44 +113,13 @@ export default function DomainTraining() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Type</label>
-                  <Input
-                    placeholder="e.g., SELECT, JOIN, AGGREGATE"
-                    value={formData.type}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  <label className="text-sm font-medium">Golden Answer</label>
+                  <Textarea
+                    placeholder="Enter the expected/golden answer..."
+                    value={formData.golden_answer}
+                    onChange={(e) => setFormData({ ...formData, golden_answer: e.target.value })}
+                    className="min-h-[120px]"
                   />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Tables</label>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Enter table name"
-                      value={newTable}
-                      onChange={(e) => setNewTable(e.target.value)}
-                      onKeyPress={(e) => e.key === "Enter" && handleAddTable()}
-                    />
-                    <Button type="button" onClick={handleAddTable} variant="outline">
-                      Add
-                    </Button>
-                  </div>
-                  {formData.tables.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {formData.tables.map((table) => (
-                        <div
-                          key={table}
-                          className="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded text-sm"
-                        >
-                          <span>{table}</span>
-                          <button
-                            onClick={() => handleRemoveTable(table)}
-                            className="text-muted-foreground hover:text-destructive"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
               <div className="flex justify-end gap-2">
@@ -195,39 +150,17 @@ export default function DomainTraining() {
               <TableHeader className="bg-slate-50/50">
                 <TableRow>
                   <TableHead className="w-[50px]">Row</TableHead>
-                  <TableHead className="w-[500px]">Question</TableHead>
-                  <TableHead>Types</TableHead>
-                  <TableHead>Tables</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-[400px]">Question</TableHead>
+                  <TableHead>Golden Answer</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {examples.map((ex, index) => (
-                  <TableRow key={ex.id} className="group">
+                  <TableRow key={ex.id}>
                     <TableCell className="text-muted-foreground">{index + 1}</TableCell>
                     <TableCell className="font-medium leading-relaxed py-4">{ex.question}</TableCell>
-                    <TableCell className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {ex.type}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      <ul className="list-disc list-inside">
-                        {ex.tables.map((t) => (
-                          <li key={t}>{t}</li>
-                        ))}
-                      </ul>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => deleteMutation.mutate(ex.id)}
-                          disabled={deleteMutation.isPending}
-                        >
-                          <Trash2 className="w-4 h-4 text-muted-foreground" />
-                        </Button>
-                      </div>
+                    <TableCell className="text-sm text-muted-foreground font-mono leading-relaxed py-4">
+                      {ex.golden_answer}
                     </TableCell>
                   </TableRow>
                 ))}

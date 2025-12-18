@@ -126,44 +126,37 @@ async def seed_context_data():
         {
             "domain_id": domain_id,
             "question": "What was the total revenue for the EMEA region in Q3 2024?",
-            "type": "FEWSHOTS",
-            "tables": ["SALES.REVENUE", "GEO.REGIONS"]
+            "golden_answer": "The total revenue for the EMEA region in Q3 2024 was $45.2 million, representing a 12% increase compared to Q3 2023."
         },
         {
             "domain_id": domain_id,
             "question": "Show me the top 10 customers by lifetime value",
-            "type": "FEWSHOTS",
-            "tables": ["CUSTOMERS.PROFILES", "SALES.TRANSACTIONS"]
+            "golden_answer": "The top 10 customers by lifetime value are: 1) Acme Corp ($2.5M), 2) TechGlobal Inc ($2.1M), 3) DataSystems Ltd ($1.8M), 4) CloudFirst Solutions ($1.6M), 5) Enterprise Partners ($1.4M), 6) Digital Innovations ($1.3M), 7) Smart Analytics Co ($1.2M), 8) Future Tech Group ($1.1M), 9) Global Ventures ($980K), 10) Innovation Labs ($920K)."
         },
         {
             "domain_id": domain_id,
             "question": "What is the average order value for mobile app purchases vs website purchases?",
-            "type": "FEWSHOTS",
-            "tables": ["SALES.ORDERS", "SALES.ORDER_ITEMS", "CHANNELS.SOURCES"]
+            "golden_answer": "The average order value for mobile app purchases is $127.50, while website purchases average $156.30. Website purchases have a 22.6% higher average order value compared to mobile app purchases."
         },
         {
             "domain_id": domain_id,
             "question": "How many new customers did we acquire last month compared to the same month last year?",
-            "type": "FEWSHOTS",
-            "tables": ["CUSTOMERS.PROFILES", "CUSTOMERS.ACQUISITION"]
+            "golden_answer": "Last month we acquired 1,247 new customers, which is a 18% increase compared to the same month last year when we acquired 1,056 new customers. This represents an additional 191 customers year-over-year."
         },
         {
             "domain_id": domain_id,
             "question": "What is the churn rate for enterprise customers in the last 6 months?",
-            "type": "FEWSHOTS",
-            "tables": ["CUSTOMERS.PROFILES", "CUSTOMERS.CHURN", "CUSTOMERS.SEGMENTS"]
+            "golden_answer": "The churn rate for enterprise customers in the last 6 months is 3.2%, which is below our target threshold of 5%. This represents 12 churned customers out of 375 total enterprise accounts."
         },
         {
             "domain_id": domain_id,
             "question": "Which product categories have the highest return rate?",
-            "type": "FEWSHOTS",
-            "tables": ["PRODUCTS.CATALOG", "SALES.RETURNS", "PRODUCTS.CATEGORIES"]
+            "golden_answer": "The product categories with the highest return rates are: 1) Apparel (8.5%), 2) Electronics Accessories (6.2%), 3) Home Decor (5.8%), 4) Footwear (5.1%), and 5) Small Appliances (4.7%). The overall average return rate across all categories is 3.9%."
         },
         {
             "domain_id": domain_id,
             "question": "What is the average time to resolution for customer support tickets by priority level?",
-            "type": "FEWSHOTS",
-            "tables": ["SUPPORT.TICKETS", "SUPPORT.RESOLUTIONS"]
+            "golden_answer": "Average resolution times by priority: Critical - 2.3 hours, High - 8.5 hours, Medium - 24.7 hours, Low - 48.2 hours. Critical tickets are resolved 91% faster than our SLA target of 4 hours."
         }
     ]
     
@@ -172,7 +165,7 @@ async def seed_context_data():
         await training_collection.insert_many(training_examples)
     print(f"✅ Added {len(training_examples)} Training Examples")
     
-    # 5. Test Sets (with varied statuses for better dashboard metrics)
+    # 5. Test Sets (with varied statuses - 82% pass rate for demo)
     print("\n🧪 Seeding Test Sets...")
     test_sets_collection = db["test_sets"]
     
@@ -180,74 +173,112 @@ async def seed_context_data():
         {
             "domain_id": domain_id,
             "question": "What is the year-over-year growth rate for Q4?",
-            "ground_truth": "Calculate (Q4_2024_revenue - Q4_2023_revenue) / Q4_2023_revenue * 100",
+            "ground_truth": "The year-over-year growth rate for Q4 is 15.3%, calculated by comparing Q4 2024 revenue of $52.8M against Q4 2023 revenue of $45.8M.",
             "difficulty": "medium",
             "last_status": "pass",
-            "last_agent_answer": "To calculate YoY growth: ((Q4 2024 - Q4 2023) / Q4 2023) × 100",
-            "last_evaluation_reasoning": "Correct formula and approach"
+            "last_agent_answer": "Q4 YoY growth rate is 15.3% ($52.8M in 2024 vs $45.8M in 2023)",
+            "last_evaluation_reasoning": "Correct calculation and clear presentation",
+            "confidence_score": 95.8
         },
         {
             "domain_id": domain_id,
             "question": "List all active customers in the enterprise segment",
-            "ground_truth": "SELECT * FROM customers WHERE segment = 'enterprise' AND status = 'active'",
+            "ground_truth": "There are 127 active enterprise customers: Acme Corp, TechGlobal Inc, DataSystems Ltd, CloudFirst Solutions, Enterprise Partners, and 122 others with active contracts and regular engagement.",
             "difficulty": "easy",
             "last_status": "pass",
-            "last_agent_answer": "Query: SELECT * FROM customers WHERE segment='enterprise' AND status='active'",
-            "last_evaluation_reasoning": "Exact match with ground truth"
+            "last_agent_answer": "127 active enterprise customers including Acme Corp, TechGlobal Inc, DataSystems Ltd, and 124 others",
+            "last_evaluation_reasoning": "Accurate count and representative examples provided",
+            "confidence_score": 98.2
         },
         {
             "domain_id": domain_id,
             "question": "What is the customer lifetime value for cohorts acquired in 2023?",
-            "ground_truth": "Calculate total revenue per customer for 2023 cohort divided by number of customers",
+            "ground_truth": "The average customer lifetime value for the 2023 cohort is $8,450, based on 1,247 customers generating $10.5M in total revenue over their lifecycle.",
             "difficulty": "hard",
             "last_status": "pass",
-            "last_agent_answer": "CLV = Total Revenue from 2023 Cohort / Number of Customers in Cohort",
-            "last_evaluation_reasoning": "Correct calculation method"
+            "last_agent_answer": "2023 cohort CLV is $8,450 per customer (1,247 customers, $10.5M total revenue)",
+            "last_evaluation_reasoning": "Correct CLV calculation with supporting data",
+            "confidence_score": 92.5
         },
         {
             "domain_id": domain_id,
             "question": "Show the conversion funnel metrics for the checkout process",
-            "ground_truth": "Calculate conversion rates at each step: cart -> checkout -> payment -> confirmation",
+            "ground_truth": "Checkout funnel conversion rates: Cart (100%) → Checkout Started (68%) → Payment Info (52%) → Order Confirmed (45%). Overall cart-to-purchase conversion is 45%.",
             "difficulty": "medium",
             "last_status": "warn",
-            "last_agent_answer": "Conversion funnel: cart → checkout → payment",
-            "last_evaluation_reasoning": "Missing final confirmation step"
+            "last_agent_answer": "Funnel: Cart (100%) → Checkout (68%) → Payment (52%)",
+            "last_evaluation_reasoning": "Missing final confirmation step and overall conversion rate",
+            "confidence_score": 78.3
         },
         {
             "domain_id": domain_id,
             "question": "What is the average basket size by customer segment?",
-            "ground_truth": "Calculate AVG(order_total) GROUP BY customer_segment",
+            "ground_truth": "Average basket sizes by segment: Enterprise $2,340, SMB $890, Individual $156. Enterprise customers have 15x higher basket size than individual customers.",
             "difficulty": "easy",
             "last_status": "pass",
-            "last_agent_answer": "SELECT customer_segment, AVG(order_total) FROM orders GROUP BY customer_segment",
-            "last_evaluation_reasoning": "Correct SQL query structure"
+            "last_agent_answer": "Avg basket: Enterprise $2,340, SMB $890, Individual $156",
+            "last_evaluation_reasoning": "Accurate segmentation and clear comparison",
+            "confidence_score": 96.7
         },
         {
             "domain_id": domain_id,
             "question": "Calculate monthly recurring revenue for SaaS subscriptions",
-            "ground_truth": "SUM(subscription_price) WHERE status='active' AND billing_cycle='monthly'",
+            "ground_truth": "Current MRR is $847,500 from 3,450 active subscriptions with an average subscription value of $245.65 per month.",
             "difficulty": "medium",
             "last_status": "pass",
-            "last_agent_answer": "MRR = SUM of all active monthly subscription prices",
-            "last_evaluation_reasoning": "Correct MRR calculation"
+            "last_agent_answer": "MRR: $847,500 (3,450 active subs, avg $245.65/month)",
+            "last_evaluation_reasoning": "Correct MRR with breakdown details",
+            "confidence_score": 94.1
         },
         {
             "domain_id": domain_id,
             "question": "Identify customers at risk of churning based on engagement metrics",
-            "ground_truth": "Analyze last_login_date, feature_usage, support_tickets to identify churn risk",
+            "ground_truth": "42 customers at high churn risk based on: no login in 30+ days (18 customers), declining feature usage (15 customers), multiple support tickets (9 customers). Recommended immediate outreach.",
             "difficulty": "hard",
             "last_status": "fail",
-            "last_agent_answer": "Check last login date only",
-            "last_evaluation_reasoning": "Incomplete analysis - missing feature usage and support tickets"
+            "last_agent_answer": "18 customers haven't logged in for 30+ days",
+            "last_evaluation_reasoning": "Incomplete - only checked login, missed feature usage and support ticket analysis",
+            "confidence_score": 45.2
         },
         {
             "domain_id": domain_id,
             "question": "What is the average response time for customer support tickets?",
-            "ground_truth": "Calculate AVG(resolution_time - created_time) for all closed tickets",
+            "ground_truth": "Average support response time is 4.2 hours across all tickets. By priority: Critical 1.5hrs, High 3.8hrs, Medium 6.5hrs, Low 12.3hrs.",
             "difficulty": "easy",
             "last_status": "pass",
-            "last_agent_answer": "Average response time = AVG(resolution_time - created_time)",
-            "last_evaluation_reasoning": "Correct calculation"
+            "last_agent_answer": "Avg response: 4.2hrs overall (Critical 1.5hrs, High 3.8hrs, Medium 6.5hrs, Low 12.3hrs)",
+            "last_evaluation_reasoning": "Complete breakdown with priority levels",
+            "confidence_score": 97.4
+        },
+        {
+            "domain_id": domain_id,
+            "question": "Generate a sales forecast for next quarter based on historical trends",
+            "ground_truth": "Q1 2025 forecast: $58.2M revenue (10% growth), based on 3-year trend analysis, seasonal patterns, and current pipeline of $42M. Confidence interval: $55.8M - $60.6M.",
+            "difficulty": "hard",
+            "last_status": "pass",
+            "last_agent_answer": "Q1 2025 forecast: $58.2M (10% growth, $55.8M-$60.6M range)",
+            "last_evaluation_reasoning": "Solid forecast with methodology and confidence interval",
+            "confidence_score": 89.6
+        },
+        {
+            "domain_id": domain_id,
+            "question": "What percentage of users completed onboarding in the last 30 days?",
+            "ground_truth": "In the last 30 days, 847 out of 1,120 new users completed onboarding, representing a 75.6% completion rate. This is 5.2% above our target of 70%.",
+            "difficulty": "medium",
+            "last_status": "fail",
+            "last_agent_answer": "847 users completed onboarding out of 1,120 new users",
+            "last_evaluation_reasoning": "Missing percentage calculation and time period context",
+            "confidence_score": 52.9
+        },
+        {
+            "domain_id": domain_id,
+            "question": "Show top 5 products by profit margin",
+            "ground_truth": "Top 5 by profit margin: 1) Premium Analytics ($450 cost, $1,200 price, 62.5% margin), 2) Enterprise Suite ($890/$2,100, 57.6%), 3) Pro Dashboard ($180/$400, 55%), 4) Data Connector ($95/$200, 52.5%), 5) API Access ($120/$250, 52%).",
+            "difficulty": "easy",
+            "last_status": "pass",
+            "last_agent_answer": "Top 5 margins: Premium Analytics 62.5%, Enterprise Suite 57.6%, Pro Dashboard 55%, Data Connector 52.5%, API Access 52%",
+            "last_evaluation_reasoning": "Accurate ranking with margin percentages",
+            "confidence_score": 93.8
         }
     ]
     
