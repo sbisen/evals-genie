@@ -83,7 +83,7 @@ export default function UserStories() {
       <div className="p-8 max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">User Stories</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Use Cases</h1>
             <p className="text-muted-foreground">Define the personas and goals for your agent evaluation.</p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
